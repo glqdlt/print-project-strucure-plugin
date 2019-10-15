@@ -18,64 +18,28 @@ package com.glqdlt.helper;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Goal which touches a timestamp file.
- *
- * @goal touch
- * 
- * @phase process-sources
+ * @author glqdlt
  */
-public class MyMojo
-    extends AbstractMojo
-{
-    /**
-     * Location of the file.
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File outputDirectory;
+@Mojo(name = "hello")
+public class MyMojo extends AbstractMojo {
 
-    public void execute()
-        throws MojoExecutionException
-    {
-        File f = outputDirectory;
+    @Parameter(property = "msg",defaultValue = "from maven")
+    private String msg;
 
-        if ( !f.exists() )
-        {
-            f.mkdirs();
-        }
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info(String.format("Message :%s",msg));
+    }
 
-        File touch = new File( f, "touch.txt" );
+    public String getMsg() {
+        return msg;
+    }
 
-        FileWriter w = null;
-        try
-        {
-            w = new FileWriter( touch );
-
-            w.write( "touch.txt" );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating file " + touch, e );
-        }
-        finally
-        {
-            if ( w != null )
-            {
-                try
-                {
-                    w.close();
-                }
-                catch ( IOException e )
-                {
-                    // ignore
-                }
-            }
-        }
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
